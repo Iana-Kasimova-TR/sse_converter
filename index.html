@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SSE Decoder</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>SSE Decoder</h1>
+
+  <textarea id="input" placeholder="Paste your SSE data here..."></textarea>
+  <button onclick="decodeSSE()">Decode</button>
+
+  <h2>Output:</h2>
+  <pre id="output">Decoded text will appear here.</pre>
+
+  <script type="module">
+    let pyodide = await loadPyodide();
+    await pyodide.loadPackage("micropip");
+    await pyodide.runPythonAsync(await (await fetch("main.py")).text());
+
+    async function decodeSSE() {
+      const input = document.getElementById("input").value;
+      const result = await pyodide.runPythonAsync(`
+decode_sse(${JSON.stringify(input)})
+`);
+      document.getElementById("output").innerText = result;
+    }
+  </script>
+</body>
+</html>
