@@ -15,18 +15,20 @@
   <h2>Output:</h2>
   <pre id="output">Decoded text will appear here.</pre>
 
-  <script type="module">
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("micropip");
-    await pyodide.runPythonAsync(await (await fetch("main.py")).text());
+<script type="module">
+  let pyodide = await loadPyodide();
+  await pyodide.loadPackage("micropip");
+  await pyodide.runPythonAsync(await (await fetch("main.py")).text());
 
-    async function decodeSSE() {
-      const input = document.getElementById("input").value;
-      const result = await pyodide.runPythonAsync(`
+  // Define decodeSSE and attach it to window so HTML can call it
+  window.decodeSSE = async function () {
+    const input = document.getElementById("input").value;
+    const result = await pyodide.runPythonAsync(`
 decode_sse(${JSON.stringify(input)})
 `);
-      document.getElementById("output").innerText = result;
-    }
-  </script>
+    document.getElementById("output").innerText = result;
+  };
+</script>
+
 </body>
 </html>
